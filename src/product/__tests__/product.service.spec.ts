@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { returnDeleteMock } from '../../__mocks__/return-delete.mock';
 import { categoryMock } from '../../category/__mocks__/category.mock';
 import { CategoryService } from '../../category/category.service';
 import { createproductMock } from '../__mocks__/create-product.mock';
@@ -27,7 +28,9 @@ describe('ProductService', () => {
           provide: getRepositoryToken(ProductEntity),
           useValue: {
             find: jest.fn().mockResolvedValue([productMock]),
+            findOne: jest.fn().mockResolvedValue(productMock),
             save: jest.fn().mockResolvedValue(productMock),
+            delete: jest.fn().mockResolvedValue(returnDeleteMock),
           },
         },
       ],
@@ -76,5 +79,23 @@ describe('ProductService', () => {
       .mockRejectedValue(new Error());
 
     expect(service.createProduct(createproductMock)).rejects.toThrowError();
+  });
+
+  it('should return product in find by id', async () => {
+    const product = await service.findProductById(productMock.id);
+
+    expect(product).toEqual(productMock);
+  });
+
+  it('should return error in product not found', async () => {
+    jest.spyOn(productRepository, 'findOne').mockResolvedValue(undefined);
+
+    expect(service.findProductById(productMock.id)).rejects.toThrowError();
+  });
+
+  it('should return deleted true in delete product', async () => {
+    const deleted = await service.deleteProduct(productMock.id);
+
+    expect(deleted).toEqual(returnDeleteMock);
   });
 });
