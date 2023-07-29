@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoryEntity } from './entities/category.entity';
 import { Repository } from 'typeorm';
 import { CreateCategory } from './dtos/create-category.dto';
+import { CategoryEntity } from './entities/category.entity';
 
 @Injectable()
 export class CategoryService {
@@ -23,6 +23,20 @@ export class CategoryService {
     }
 
     return categories;
+  }
+
+  async findCategoryById(categoryId: number): Promise<CategoryEntity> {
+    const category = await this.categoryRepository.findOne({
+      where: {
+        id: categoryId,
+      },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Category id: ${categoryId} not found`);
+    }
+
+    return category;
   }
 
   async findCategoryByName(name: string): Promise<CategoryEntity> {
