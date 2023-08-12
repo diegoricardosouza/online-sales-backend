@@ -4,8 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createPasswordHashed, validatePassword } from 'src/utils/password';
 import { Repository } from 'typeorm';
+import { createPasswordHashed, validatePassword } from '../utils/password';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
 import { UserEntity } from './entities/user.entity';
