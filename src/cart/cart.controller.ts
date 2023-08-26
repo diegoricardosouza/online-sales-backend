@@ -10,7 +10,7 @@ import { Roles } from '../decorators/role.decorator';
 import { UserType } from '../user/enum/user-type.enum';
 import { CartService } from './cart.service';
 import { InsertCartDTO } from './dtos/insert-cart.dto';
-import { CartEntity } from './entities/cart.entity';
+import { ReturnCartDTO } from './dtos/return-cart.dto';
 
 @Roles(UserType.User, UserType.Admin)
 @Controller('cart')
@@ -22,7 +22,9 @@ export class CartController {
   async createCart(
     @Body() insertCart: InsertCartDTO,
     @UserId() userId: number,
-  ): Promise<CartEntity> {
-    return this.cartService.insertProductInCart(insertCart, userId);
+  ): Promise<ReturnCartDTO> {
+    return new ReturnCartDTO(
+      await this.cartService.insertProductInCart(insertCart, userId),
+    );
   }
 }
